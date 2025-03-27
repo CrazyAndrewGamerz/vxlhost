@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Server Control Panel</title>
+  <title>Minecraft Server Control Panel</title>
   <style>
     body {
       background-color: #121212;
@@ -160,7 +160,7 @@
 <body>
 
 <div class="container">
-  <h1>Server Control Panel</h1>
+  <h1>Minecraft Server Control Panel</h1>
 
   <!-- Tabs for switching between sections -->
   <div class="tabs">
@@ -175,7 +175,7 @@
     <div class="panel">
       <div class="server-info">
         <div>
-          <h2>Server Name: MyServer</h2>
+          <h2>Server Name: <span id="serverNameDisplay">MyMinecraftServer</span></h2>
           <p>IP Address: 192.168.1.100</p>
           <p>Duration Remaining: 7 days</p>
         </div>
@@ -199,8 +199,8 @@
     <div class="panel">
       <h3>Settings</h3>
       <form id="settingsForm">
-        <label for="serverName">Server Name</label>
-        <input type="text" id="serverName" value="MyServer" onchange="updateSettings()" /><br /><br />
+        <label for="serverNameInput">Server Name</label>
+        <input type="text" id="serverNameInput" value="MyMinecraftServer" onchange="updateSettings()" /><br /><br />
         <label for="serverPassword">Password</label>
         <input type="password" id="serverPassword" value="password123" onchange="updateSettings()" /><br /><br />
         <label for="maxPlayers">Max Players</label>
@@ -229,7 +229,7 @@
         <div class="performance-bar">
           <span id="cpuUsage" style="width: 45%"></span>
         </div>
-        <p>45% Usage</p>
+        <p id="cpuUsageText">45% Usage</p>
       </div>
 
       <div>
@@ -237,7 +237,7 @@
         <div class="performance-bar">
           <span id="ramUsage" style="width: 60%"></span>
         </div>
-        <p>60% Usage</p>
+        <p id="ramUsageText">60% Usage</p>
       </div>
 
       <div>
@@ -245,13 +245,14 @@
         <div class="performance-bar">
           <span id="storageUsage" style="width: 25%"></span>
         </div>
-        <p>25% Usage</p>
+        <p id="storageUsageText">25% Usage</p>
       </div>
     </div>
   </div>
 </div>
 
 <script>
+  // Switch tabs
   function showTab(tab) {
     let tabs = document.querySelectorAll('.tab-content');
     tabs.forEach(t => t.classList.remove('active'));
@@ -263,6 +264,7 @@
     event.target.classList.add('active');
   }
 
+  // Start Server
   function startServer() {
     document.getElementById("serverStatus").innerText = "Online";
     document.getElementById("serverStatus").classList.remove("offline");
@@ -270,6 +272,7 @@
     addToConsole("Server Started!");
   }
 
+  // Stop Server
   function stopServer() {
     document.getElementById("serverStatus").innerText = "Offline";
     document.getElementById("serverStatus").classList.remove("online");
@@ -277,28 +280,30 @@
     addToConsole("Server Stopped!");
   }
 
+  // Restart Server
   function restartServer() {
     addToConsole("Restarting server...");
     stopServer();
     setTimeout(startServer, 2000); // Simulate restart with delay
   }
 
+  // Add to Console
   function addToConsole(message) {
     const consoleOutput = document.getElementById('consoleOutput');
     consoleOutput.innerHTML += `<br>${new Date().toLocaleTimeString()} - ${message}`;
     consoleOutput.scrollTop = consoleOutput.scrollHeight;  // Scroll to bottom
   }
 
+  // Update Settings
   function updateSettings() {
-    const serverName = document.getElementById('serverName').value;
-    const serverPassword = document.getElementById('serverPassword').value;
+    const serverName = document.getElementById('serverNameInput').value;
     const maxPlayers = document.getElementById('maxPlayers').value;
-
+    document.getElementById('serverNameDisplay').innerText = serverName;
     addToConsole(`Settings updated: ${serverName}, Max Players: ${maxPlayers}`);
   }
 
+  // Simulate performance updates (dynamically)
   function updatePerformance() {
-    // Simulating dynamic performance updates
     let cpuUsage = Math.floor(Math.random() * 100);
     let ramUsage = Math.floor(Math.random() * 100);
     let storageUsage = Math.floor(Math.random() * 100);
@@ -307,9 +312,9 @@
     document.getElementById('ramUsage').style.width = ramUsage + '%';
     document.getElementById('storageUsage').style.width = storageUsage + '%';
 
-    document.querySelector('#cpuUsage').nextElementSibling.innerText = cpuUsage + "% Usage";
-    document.querySelector('#ramUsage').nextElementSibling.innerText = ramUsage + "% Usage";
-    document.querySelector('#storageUsage').nextElementSibling.innerText = storageUsage + "% Usage";
+    document.getElementById('cpuUsageText').innerText = cpuUsage + "% Usage";
+    document.getElementById('ramUsageText').innerText = ramUsage + "% Usage";
+    document.getElementById('storageUsageText').innerText = storageUsage + "% Usage";
 
     setTimeout(updatePerformance, 2000); // Update every 2 seconds
   }
