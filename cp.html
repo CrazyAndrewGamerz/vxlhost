@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Control Panel</title>
+  <title>Server Control Panel</title>
   <style>
     body {
       background-color: #121212;
@@ -90,6 +90,71 @@
       background-color: #dc3545;
     }
 
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      background-color: #222;
+      margin-bottom: 20px;
+    }
+
+    .tab-button {
+      padding: 10px 20px;
+      cursor: pointer;
+      color: white;
+      background-color: #444;
+      border: none;
+      font-size: 1.1em;
+      text-align: center;
+      width: 33%;
+    }
+
+    .tab-button.active {
+      background-color: #007bff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .console-output {
+      font-family: monospace;
+      background-color: #333;
+      padding: 10px;
+      height: 200px;
+      overflow-y: scroll;
+      color: lime;
+      margin-top: 10px;
+    }
+
+    .performance-bar {
+      height: 20px;
+      background-color: #444;
+      border-radius: 5px;
+      margin-bottom: 5px;
+    }
+
+    .performance-bar span {
+      display: block;
+      height: 100%;
+      border-radius: 5px;
+    }
+
+    .performance-bar.cpu {
+      background-color: #ffcc00;
+    }
+
+    .performance-bar.ram {
+      background-color: #007bff;
+    }
+
+    .performance-bar.storage {
+      background-color: #28a745;
+    }
+
   </style>
 </head>
 <body>
@@ -97,82 +162,160 @@
 <div class="container">
   <h1>Server Control Panel</h1>
 
-  <!-- Server Information Section -->
-  <div class="panel">
-    <div class="server-info">
-      <div>
-        <h2>Server Name: VXLHost Demo</h2>
-        <p>IP Address: 192.168.1.100</p>
-        <p>Duration Remaining: 7 days</p>
+  <!-- Tabs for switching between sections -->
+  <div class="tabs">
+    <button class="tab-button active" onclick="showTab('server')">Server Info</button>
+    <button class="tab-button" onclick="showTab('settings')">Settings</button>
+    <button class="tab-button" onclick="showTab('console')">Console</button>
+    <button class="tab-button" onclick="showTab('performance')">Performance</button>
+  </div>
+
+  <!-- Server Info Tab -->
+  <div class="tab-content active" id="server">
+    <div class="panel">
+      <div class="server-info">
+        <div>
+          <h2>Server Name: MyServer</h2>
+          <p>IP Address: 192.168.1.100</p>
+          <p>Duration Remaining: 7 days</p>
+        </div>
+        <div class="status-box offline" id="serverStatus">
+          Offline
+        </div>
       </div>
-      <div class="status-box offline" id="serverStatus">
-        Offline
+    </div>
+
+    <div class="panel">
+      <div class="control-buttons">
+        <button onclick="startServer()">Start Server</button>
+        <button onclick="stopServer()">Stop Server</button>
+        <button onclick="restartServer()">Restart Server</button>
       </div>
     </div>
   </div>
 
-  <!-- Resource Usage Section -->
-  <div class="panel">
-    <div class="usage">
+  <!-- Settings Tab -->
+  <div class="tab-content" id="settings">
+    <div class="panel">
+      <h3>Settings</h3>
+      <form id="settingsForm">
+        <label for="serverName">Server Name</label>
+        <input type="text" id="serverName" value="MyServer" onchange="updateSettings()" /><br /><br />
+        <label for="serverPassword">Password</label>
+        <input type="password" id="serverPassword" value="password123" onchange="updateSettings()" /><br /><br />
+        <label for="maxPlayers">Max Players</label>
+        <input type="number" id="maxPlayers" value="20" onchange="updateSettings()" /><br /><br />
+      </form>
+    </div>
+  </div>
+
+  <!-- Console Tab -->
+  <div class="tab-content" id="console">
+    <div class="panel">
+      <h3>Console</h3>
+      <div class="console-output" id="consoleOutput">
+        Server starting...
+      </div>
+      <button onclick="addToConsole()">Simulate Command</button>
+    </div>
+  </div>
+
+  <!-- Performance Tab -->
+  <div class="tab-content" id="performance">
+    <div class="panel">
+      <h3>Performance</h3>
       <div>
-        <h3>CPU Usage</h3>
-        <div class="usage-bar">
-          <span style="width: 45%; background-color: #ffcc00;"></span>
+        <h4>CPU Usage</h4>
+        <div class="performance-bar">
+          <span id="cpuUsage" style="width: 45%"></span>
         </div>
         <p>45% Usage</p>
       </div>
+
       <div>
-        <h3>RAM Usage</h3>
-        <div class="usage-bar">
-          <span style="width: 60%; background-color: #007bff;"></span>
+        <h4>RAM Usage</h4>
+        <div class="performance-bar">
+          <span id="ramUsage" style="width: 60%"></span>
         </div>
         <p>60% Usage</p>
       </div>
+
       <div>
-        <h3>Storage Usage</h3>
-        <div class="usage-bar">
-          <span style="width: 25%; background-color: #28a745;"></span>
+        <h4>Storage Usage</h4>
+        <div class="performance-bar">
+          <span id="storageUsage" style="width: 25%"></span>
         </div>
         <p>25% Usage</p>
       </div>
     </div>
   </div>
-
-  <!-- Control Panel Section -->
-  <div class="panel">
-    <div class="control-buttons">
-      <button onclick="startServer()">Start Server</button>
-      <button onclick="stopServer()">Stop Server</button>
-      <button onclick="restartServer()">Restart Server</button>
-      <button onclick="openSettings()">Manage Settings</button>
-    </div>
-  </div>
 </div>
 
 <script>
+  function showTab(tab) {
+    let tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(t => t.classList.remove('active'));
+    
+    let buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach(b => b.classList.remove('active'));
+
+    document.getElementById(tab).classList.add('active');
+    event.target.classList.add('active');
+  }
+
   function startServer() {
     document.getElementById("serverStatus").innerText = "Online";
     document.getElementById("serverStatus").classList.remove("offline");
     document.getElementById("serverStatus").classList.add("online");
-    alert("Server Started!");
+    addToConsole("Server Started!");
   }
 
   function stopServer() {
     document.getElementById("serverStatus").innerText = "Offline";
     document.getElementById("serverStatus").classList.remove("online");
     document.getElementById("serverStatus").classList.add("offline");
-    alert("Server Stopped!");
+    addToConsole("Server Stopped!");
   }
 
   function restartServer() {
-    alert("Restarting server...");
+    addToConsole("Restarting server...");
     stopServer();
     setTimeout(startServer, 2000); // Simulate restart with delay
   }
 
-  function openSettings() {
-    alert("Opening Server Settings...");
+  function addToConsole(message) {
+    const consoleOutput = document.getElementById('consoleOutput');
+    consoleOutput.innerHTML += `<br>${new Date().toLocaleTimeString()} - ${message}`;
+    consoleOutput.scrollTop = consoleOutput.scrollHeight;  // Scroll to bottom
   }
+
+  function updateSettings() {
+    const serverName = document.getElementById('serverName').value;
+    const serverPassword = document.getElementById('serverPassword').value;
+    const maxPlayers = document.getElementById('maxPlayers').value;
+
+    addToConsole(`Settings updated: ${serverName}, Max Players: ${maxPlayers}`);
+  }
+
+  function updatePerformance() {
+    // Simulating dynamic performance updates
+    let cpuUsage = Math.floor(Math.random() * 100);
+    let ramUsage = Math.floor(Math.random() * 100);
+    let storageUsage = Math.floor(Math.random() * 100);
+
+    document.getElementById('cpuUsage').style.width = cpuUsage + '%';
+    document.getElementById('ramUsage').style.width = ramUsage + '%';
+    document.getElementById('storageUsage').style.width = storageUsage + '%';
+
+    document.querySelector('#cpuUsage').nextElementSibling.innerText = cpuUsage + "% Usage";
+    document.querySelector('#ramUsage').nextElementSibling.innerText = ramUsage + "% Usage";
+    document.querySelector('#storageUsage').nextElementSibling.innerText = storageUsage + "% Usage";
+
+    setTimeout(updatePerformance, 2000); // Update every 2 seconds
+  }
+
+  // Initialize performance updates
+  updatePerformance();
 </script>
 
 </body>
