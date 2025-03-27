@@ -53,14 +53,14 @@
   <!-- RAM selection -->
   <div class="slider-container">
     <label for="ram">Select RAM (in GB):</label>
-    <input type="range" id="ram" min="2" max="8" value="2" step="1" oninput="updatePrice()">
+    <input type="range" id="ram" min="2" max="32" value="2" step="2" oninput="updatePrice()">
     <p id="ramValue">2GB</p>
   </div>
 
   <!-- Storage selection -->
   <div class="slider-container">
     <label for="storage">Select Storage (in GB):</label>
-    <input type="range" id="storage" min="10" max="100" value="10" step="10" oninput="updatePrice()">
+    <input type="range" id="storage" min="10" max="500" value="10" step="10" oninput="updatePrice()">
     <p id="storageValue">10GB</p>
   </div>
 
@@ -77,7 +77,7 @@
   <!-- Bandwidth selection -->
   <div class="slider-container">
     <label for="bandwidth">Select Bandwidth (Mbps):</label>
-    <input type="range" id="bandwidth" min="50" max="100" value="50" step="1" oninput="updatePrice()">
+    <input type="range" id="bandwidth" min="50" max="500" value="50" step="50" oninput="updatePrice()">
     <p id="bandwidthValue">50Mbps</p>
   </div>
 
@@ -119,29 +119,29 @@
     document.getElementById('storageValue').innerText = storage + 'GB';
     document.getElementById('bandwidthValue').innerText = bandwidth + 'Mbps';
 
-    // Set base prices
-    let basePrice = 10; // Basic price for the lowest option
-    let ramPrice = ram * 0.75; // Price per GB of RAM
+    // Set base prices for RAM, storage, CPU, bandwidth, and auto payment options
+    let basePrice = 5; // Basic price for the lowest option
+    let ramPrice = ram * 0.5; // Price per GB of RAM
     let storagePrice = storage * 0.1; // Price per GB of storage
     let cpuPrice = 0;
-    if (cpu === "premium") cpuPrice = 15; // Premium CPU
-    if (cpu === "pro") cpuPrice = 30; // Pro CPU
+    if (cpu === "premium") cpuPrice = 10; // Premium CPU cost
+    if (cpu === "pro") cpuPrice = 20; // Pro CPU cost
     let bandwidthPrice = bandwidth * 0.05; // Price per Mbps of bandwidth
 
-    // If auto payment is enabled, apply a discount for longer durations
+    // Apply discount if auto payment is enabled
     let priceMultiplier = 1;
     if (autoPayment) {
-      if (duration == 12) priceMultiplier = 0.85; // 15% discount for 12 months
-      else if (duration == 6) priceMultiplier = 0.90; // 10% discount for 6 months
-      else priceMultiplier = 0.95; // 5% discount for 3 months
+      if (duration == 12) priceMultiplier = 1; // 20% discount for 12 months
+      else if (duration == 6) priceMultiplier = 1; // 15% discount for 6 months
+      else priceMultiplier = 1; // 10% discount for 3 months
     }
 
-    // Calculate total price
+    // Calculate total price for the selected configuration
     let totalPrice = (basePrice + ramPrice + storagePrice + cpuPrice + bandwidthPrice) * duration * priceMultiplier;
 
     // If auto payment is enabled, show price per month
     if (autoPayment) {
-      totalPrice /= duration; // Show price per month for auto payment
+      totalPrice /= duration; // Display price per month for auto payment
     }
 
     // Display the total price
