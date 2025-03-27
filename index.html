@@ -53,15 +53,32 @@
   <!-- RAM selection -->
   <div class="slider-container">
     <label for="ram">Select RAM (in GB):</label>
-    <input type="range" id="ram" min="2" max="8" value="2" step="2" oninput="updatePrice()">
+    <input type="range" id="ram" min="2" max="8" value="2" step="1" oninput="updatePrice()">
     <p id="ramValue">2GB</p>
   </div>
 
   <!-- Storage selection -->
   <div class="slider-container">
     <label for="storage">Select Storage (in GB):</label>
-    <input type="range" id="storage" min="10" max="60" value="10" step="10" oninput="updatePrice()">
+    <input type="range" id="storage" min="10" max="100" value="10" step="10" oninput="updatePrice()">
     <p id="storageValue">10GB</p>
+  </div>
+
+  <!-- CPU options -->
+  <div class="slider-container">
+    <label for="cpu">Select CPU Type:</label>
+    <select id="cpu" name="cpu" onchange="updatePrice()">
+      <option value="basic">Basic (2 cores)</option>
+      <option value="premium">Premium (4 cores)</option>
+      <option value="pro">Pro (8 cores)</option>
+    </select>
+  </div>
+
+  <!-- Bandwidth selection -->
+  <div class="slider-container">
+    <label for="bandwidth">Select Bandwidth (Mbps):</label>
+    <input type="range" id="bandwidth" min="50" max="100" value="50" step="1" oninput="updatePrice()">
+    <p id="bandwidthValue">50Mbps</p>
   </div>
 
   <!-- Duration selection -->
@@ -92,17 +109,24 @@
     // Get values from the sliders and select
     let ram = parseInt(document.getElementById('ram').value);
     let storage = parseInt(document.getElementById('storage').value);
+    let cpu = document.getElementById('cpu').value;
+    let bandwidth = parseInt(document.getElementById('bandwidth').value);
     let duration = document.getElementById('duration').value;
     let autoPayment = document.getElementById('autoPayment').checked;
 
-    // Update the RAM and storage values displayed
+    // Update the RAM, Storage, and Bandwidth values displayed
     document.getElementById('ramValue').innerText = ram + 'GB';
     document.getElementById('storageValue').innerText = storage + 'GB';
+    document.getElementById('bandwidthValue').innerText = bandwidth + 'Mbps';
 
-    // Calculate the base price
-    let basePrice = 5; // Basic price for the lowest option
-    let ramPrice = ram * 0.5; // Price per GB of RAM
-    let storagePrice = storage * 0.05; // Price per GB of storage
+    // Set base prices
+    let basePrice = 10; // Basic price for the lowest option
+    let ramPrice = ram * 0.75; // Price per GB of RAM
+    let storagePrice = storage * 0.1; // Price per GB of storage
+    let cpuPrice = 0;
+    if (cpu === "premium") cpuPrice = 15; // Premium CPU
+    if (cpu === "pro") cpuPrice = 30; // Pro CPU
+    let bandwidthPrice = bandwidth * 0.05; // Price per Mbps of bandwidth
 
     // If auto payment is enabled, apply a discount for longer durations
     let priceMultiplier = 1;
@@ -113,10 +137,15 @@
     }
 
     // Calculate total price
-    let totalPrice = (basePrice + ramPrice + storagePrice) * duration * priceMultiplier;
+    let totalPrice = (basePrice + ramPrice + storagePrice + cpuPrice + bandwidthPrice) * duration * priceMultiplier;
+
+    // If auto payment is enabled, show price per month
+    if (autoPayment) {
+      totalPrice /= duration; // Show price per month for auto payment
+    }
 
     // Display the total price
-    document.getElementById('totalPrice').innerText = 'Price: $' + totalPrice.toFixed(2);
+    document.getElementById('totalPrice').innerText = 'Price: $' + totalPrice.toFixed(2) + (autoPayment ? '/mo' : '');
   }
 
   function toggleDuration() {
