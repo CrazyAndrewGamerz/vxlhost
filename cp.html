@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control Panel</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .panel {
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+      margin-bottom: 20px;
+    }
+
+    .server-info, .status, .usage {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .status p, .usage p {
+      font-size: 1.2em;
+    }
+
+    .control-buttons {
+      display: flex;
+      justify-content: space-evenly;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #333;
+      border: 1px solid #444;
+      color: white;
+      font-size: 1.1em;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    .usage-bar {
+      width: 100%;
+      background-color: #444;
+      height: 10px;
+      border-radius: 5px;
+    }
+
+    .usage-bar span {
+      display: block;
+      height: 100%;
+      border-radius: 5px;
+    }
+
+    .status-box {
+      padding: 10px;
+      background-color: #333;
+      border-radius: 5px;
+      width: 200px;
+      text-align: center;
+      font-size: 1.2em;
+    }
+
+    .status-box.online {
+      background-color: #28a745;
+    }
+
+    .status-box.offline {
+      background-color: #dc3545;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Server Control Panel</h1>
+
+  <!-- Server Information Section -->
+  <div class="panel">
+    <div class="server-info">
+      <div>
+        <h2>Server Name: VXLHost Demo</h2>
+        <p>IP Address: 192.168.1.100</p>
+        <p>Duration Remaining: 7 days</p>
+      </div>
+      <div class="status-box offline" id="serverStatus">
+        Offline
+      </div>
+    </div>
+  </div>
+
+  <!-- Resource Usage Section -->
+  <div class="panel">
+    <div class="usage">
+      <div>
+        <h3>CPU Usage</h3>
+        <div class="usage-bar">
+          <span style="width: 45%; background-color: #ffcc00;"></span>
+        </div>
+        <p>45% Usage</p>
+      </div>
+      <div>
+        <h3>RAM Usage</h3>
+        <div class="usage-bar">
+          <span style="width: 60%; background-color: #007bff;"></span>
+        </div>
+        <p>60% Usage</p>
+      </div>
+      <div>
+        <h3>Storage Usage</h3>
+        <div class="usage-bar">
+          <span style="width: 25%; background-color: #28a745;"></span>
+        </div>
+        <p>25% Usage</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Control Panel Section -->
+  <div class="panel">
+    <div class="control-buttons">
+      <button onclick="startServer()">Start Server</button>
+      <button onclick="stopServer()">Stop Server</button>
+      <button onclick="restartServer()">Restart Server</button>
+      <button onclick="openSettings()">Manage Settings</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function startServer() {
+    document.getElementById("serverStatus").innerText = "Online";
+    document.getElementById("serverStatus").classList.remove("offline");
+    document.getElementById("serverStatus").classList.add("online");
+    alert("Server Started!");
+  }
+
+  function stopServer() {
+    document.getElementById("serverStatus").innerText = "Offline";
+    document.getElementById("serverStatus").classList.remove("online");
+    document.getElementById("serverStatus").classList.add("offline");
+    alert("Server Stopped!");
+  }
+
+  function restartServer() {
+    alert("Restarting server...");
+    stopServer();
+    setTimeout(startServer, 2000); // Simulate restart with delay
+  }
+
+  function openSettings() {
+    alert("Opening Server Settings...");
+  }
+</script>
+
+</body>
+</html>
